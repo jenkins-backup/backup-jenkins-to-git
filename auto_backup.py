@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 import logging
-import shutil
-
 '''
     备份JENKINS_HOME到Git：
     1、在JENKINS_HOME_BAK_PATH执行git pull命令
@@ -31,6 +29,7 @@ def backup_jenkins():
             else:
                 pass
     os.chdir(JENKINS_HOME_BAK_PATH)
+    print "current dir:" + os.getcwd()
     # 1、在JENKINS_HOME_BAK_PATH执行git pull命令
     os.system("git pull")
     # 2、调用ant命令copy JENKINS_HOME_PATH to JENKINS_HOME_BAK_PATH
@@ -70,7 +69,6 @@ def backup_jenkins():
                     os.system("git rm -r %s" % bakdir)
 
     # 4、将JENKINS_HOME_BAK_PATH提交到GIT
-    print "current dir:" + os.getcwd()
     log_message = "sync jenkins config"
     os.system("git add .")
     os.system('git commit -m "%s"' % log_message)
