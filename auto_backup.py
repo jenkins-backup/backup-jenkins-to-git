@@ -28,11 +28,17 @@ def backup_jenkins():
                 JENKINS_HOME_BAK_PATH = tmp[1].strip()
             else:
                 pass
+
+    backup_script_path = os.getcwd()
+
+    # 1、在JENKINS_HOME_BAK_PATH执行git pull命令
     os.chdir(JENKINS_HOME_BAK_PATH)
     print "current dir:" + os.getcwd()
-    # 1、在JENKINS_HOME_BAK_PATH执行git pull命令
     os.system("git pull")
+
     # 2、调用ant命令copy JENKINS_HOME_PATH to JENKINS_HOME_BAK_PATH
+    os.chdir(backup_script_path)
+    print "current dir:" + os.getcwd()
     os.system("ant -f " + BACKUP_BUILD_FILE)
 
     # 3、遍历JENKINS_HOME_BAK_PATH，如果其中的文件或目录不在JENKINS_HOME中，对其执行删除操作
@@ -69,6 +75,8 @@ def backup_jenkins():
                     os.system("git rm -r %s" % bakdir)
 
     # 4、将JENKINS_HOME_BAK_PATH提交到GIT
+    os.chdir(JENKINS_HOME_BAK_PATH)
+    print "current dir:" + os.getcwd()
     log_message = "sync jenkins config"
     os.system("git add .")
     os.system('git commit -m "%s"' % log_message)
