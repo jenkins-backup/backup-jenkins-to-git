@@ -9,17 +9,21 @@ import logging
     4、将JENKINS_HOME_BAK_PATH提交到Git
 '''
 
-# JENKINS_CONFIG_FILE，存放JENKINS_HOME_BAK_PATH、JENKINS_HOME_PATH等常量
-JENKINS_CONFIG_FILE = "jenkins_config.properties"
-# BACKUP_BUILD_FILE
-BACKUP_BUILD_FILE = "backup.xml"
+# jenkins_config_properties_file_name，存放JENKINS_HOME_BAK_PATH、JENKINS_HOME_PATH等常量
+jenkins_config_properties_file_name = "jenkins_config.properties"
+# backup_build_file_name
+backup_build_file_name = "backup.xml"
 
 
 def backup_jenkins():
+    # backup_script_path
+    backup_script_path = os.path.split(os.path.realpath(__file__))[0]
     # 从jenkins_config.properties中读取JENKINS_HOME_PATH、JENKINS_HOME_BAK_PATH
     global JENKINS_HOME_BAK_PATH
     global JENKINS_HOME_PATH
-    with open(JENKINS_CONFIG_FILE, "r") as f:
+
+    jenkins_config_properties_file = os.path.join(backup_script_path, jenkins_config_properties_file_name)
+    with open(jenkins_config_properties_file, "r") as f:
         for line in f.readlines():
             tmp = line.split("=", 1)
             if "JENKINS_HOME_PATH" == tmp[0].strip():
@@ -29,17 +33,16 @@ def backup_jenkins():
             else:
                 pass
 
-    backup_script_path = os.getcwd()
-
     # 1、在JENKINS_HOME_BAK_PATH执行git pull命令
     os.chdir(JENKINS_HOME_BAK_PATH)
     print "current dir:" + os.getcwd()
     os.system("git pull")
 
     # 2、调用ant命令copy JENKINS_HOME_PATH to JENKINS_HOME_BAK_PATH
+    backup_build_file = os.path.join(backup_script_path, backup_build_file_name)
     os.chdir(backup_script_path)
     print "current dir:" + os.getcwd()
-    os.system("ant -f " + BACKUP_BUILD_FILE)
+    os.system("ant -f " + backup_build_file)
 
     # 3、遍历JENKINS_HOME_BAK_PATH，如果其中的文件或目录不在JENKINS_HOME中，对其执行删除操作
     for dirpath, dirs, files in os.walk(JENKINS_HOME_BAK_PATH):
