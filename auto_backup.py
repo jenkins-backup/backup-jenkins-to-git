@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import shutil
 import logging
 '''
     备份JENKINS_HOME到Git：
@@ -60,7 +61,7 @@ def backup_jenkins():
                 if not os.path.exists(orginfile):
                     # 对不在JENKINS_HOME_PATH下的文件执行删除操作
                     logging.debug(orginfile + " is not exists.")
-                    os.system("git rm %s" % bakfile)
+                    os.remove(bakfile)
         # 3.2、遍历JENKINS_HOME_BAK_PATH，如果其中的目录不在JENKINS_HOME中，对其执行删除操作
         for bak_dir in dirs:
             # JENKINS_HOME_BAK_PATH下的目录
@@ -75,7 +76,7 @@ def backup_jenkins():
                 if not os.path.exists(orgindir):
                     # 对不在JENKINS_HOME_PATH下的目录执行删除操作
                     logging.debug(orgindir + " is not exists.")
-                    os.system("git rm -r %s" % bakdir)
+                    shutil.rmtree(bakdir)
 
     # 4、将JENKINS_HOME_BAK_PATH提交到GIT
     os.chdir(JENKINS_HOME_BAK_PATH)
