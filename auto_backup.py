@@ -82,7 +82,7 @@ def backup_jenkins():
     os.chdir(JENKINS_HOME_BAK_PATH)
     print "current dir:" + os.getcwd()
     log_message = "sync jenkins config"
-    os.system("git add .")
+    os.system("git add -A")
     os.system('git commit -m "%s"' % log_message)
     os.system("git push origin master")
 
